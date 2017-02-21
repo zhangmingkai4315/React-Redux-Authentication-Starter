@@ -9,26 +9,22 @@ class Header extends Component{
   }
   renderHeader(){
     if(this.props.auth&&this.props.auth.authenticate){
-      return(
-        <ul className="nav nav-pills">
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/profile">Profile</Link></li>
-          <li><Link to="/logout">Logout</Link></li>
-        </ul>
-      );
+      return [
+        <li key="1"><Link className = "nav-link"  to="/profile">个人页面</Link></li>,
+        <li key="2"><Link className = "nav-link" to="/signout">退出</Link></li>];
     }else{
-      return (
-        <ul className="nav nav-pills">
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/signin">Sign in</Link></li>
-          <li><Link to="/signup">Sing up</Link></li>
-        </ul>);
+      return [
+        <li key="1"><Link className = "nav-link" to="/signin">登录</Link></li>,
+        <li key="2"><Link className = "nav-link" to="/signup">注册</Link></li>];
     }
   }
   render(){
     return (
     <nav className="navbar navbar-default">
-      {this.renderHeader()}
+      <ul className="nav nav-pills">
+          <li key="0"><Link to="/">主页</Link></li>
+          {this.renderHeader()}
+      </ul>
     </nav>
     );
   }

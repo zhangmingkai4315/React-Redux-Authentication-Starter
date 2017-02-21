@@ -1,11 +1,12 @@
 import React , {Component} from 'react'; // eslint-disable-line no-unused-vars
 
-const Home = ()=>{
+const Profile = ()=>{
   return (
     <div>
-        <h2>Welcome</h2>
+        <h2>Profile</h2>
     </div>
   );
 };
 
-export default Home;
+export default Profile;
+

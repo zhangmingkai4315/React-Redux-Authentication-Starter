@@ -1,25 +1,26 @@
-# ReduxSimpleStarter
+# React Redux Authentication Starter
 
-Interested in learning [Redux](https://www.udemy.com/react-redux/)?
+关于redux可参考官方文档 [Redux](https://www.udemy.com/react-redux/)
 
-###Getting Started###
+## 使用说明
 
-There are two methods for getting started with this repo.
-
-####Familiar with Git?#####
-Checkout this repo, install dependencies, then start the gulp process with the following:
+1.下载git库
 
 ```
-	> git clone git@github.com:StephenGrider/ReduxSimpleStarter.git
-	> cd ReduxSimpleStarter
-	> npm install
-	> npm start
+git clone https://github.com/zhangmingkai4315/React-Redux-Authentication-Starter.git
 ```
 
-####Not Familiar with Git?#####
-Click [here](https://github.com/StephenGrider/ReactStarter/releases) then download the .zip file.  Extract the contents of the zip file, then open your terminal, change to the project directory, and:
+2.分别进入两个目录安装所需的依赖
 
 ```
-	> npm install
-	> npm start
+
+cd client && npm install 
+cd ../
+cd server && npm install 
+
 ```
+
+3.安装mongodb数据库
+
+关于如何安装，请访问官方安装文档[Mongodb](https://docs.mongodb.com/manual/installation/)
+

@@ -28,15 +28,19 @@ app.post('/signup',(req,res)=>{
             return user.generateAuthToken();
         })
         .then(token=>{
-            res.header('x-auth',token).send(user.toJSON());
+            res.header('x-auth',token).send({
+                id:user._id,
+                email:user.email,
+                token,
+            });
         })
         .catch((e)=>{
             res.status(400).json({
-                error:e.errmsg||'Username Or Password Input Error'
+                error:e||'用户名和密码输入不正确'
             });
         });
     }else{
-        res.status(400).send('no data posted.');
+        res.status(400).send('请重新输入验证信息');
     }
 });
 
@@ -82,7 +86,7 @@ app.get('/profile',authMiddleware,(req,res)=>{
 // 提供用户jwt认证header后才能访问
 // 成功：删除用户的登录token
 // 失败：返回失败的错误代码和信息
-app.delete('/signout',authMiddleware,(req,res)=>{
+app.get('/signout',authMiddleware,(req,res)=>{
     req.user.removeToken(req.token).then(()=>{
         res.header('x-auth','').send();
     }).catch(e=>{

@@ -1,28 +1,22 @@
-import React from 'react';
+import React from 'react'; // eslint-disable-line no-unused-vars
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import {Router,Route,IndexRoute,browserHistory} from 'react-router';
-import App from './components/app';
-import Signin from './components/auth/Signin';
-import Home from './components/Home';
-import thunk from 'redux-thunk';
-import reducers from './reducers';
+import routes from './routes';
+import {AUTH_USER} from './actions/actionTypes';
+import '../style/style.css';
 import '../node_modules/toastr/build/toastr.min.css';
-const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
 
-
-const routes = (
-  <Router history={browserHistory}>
-    <Route path='/' IndexRoute={Home} component={App}>
-      <Route path='/signin' component={Signin}/>
-    </Route>
-  </Router>
-)
-
+import configStore from './store';
+const store = configStore();
+const token = localStorage.getItem('token');
+const auth_data = JSON.parse(localStorage.getItem('auth_data'));
+if(token){
+  // 如果用户token存在则更新用户的登录状态
+  store.dispatch({type:AUTH_USER,payload:Object.assign({},auth_data,{token,authenticate:true})});
+}
 
 ReactDOM.render(
-  <Provider store={createStoreWithMiddleware(reducers)}>
+  <Provider store={store}>
     {routes}
   </Provider>
-  , document.querySelector('.container'));
+, document.querySelector('.container'));

@@ -1,4 +1,4 @@
-import {SIGNIN_USER,AUTH_USER} from './actionTypes';
+import {AUTH_USER,AUTH_USER_ERROR,UNAUTH_USER} from './actionTypes';
 import axios from 'axios';
 import toastr from 'toastr';
 import {browserHistory} from 'react-router';
@@ -16,11 +16,75 @@ export function signinUser({email,password}){
   return function(dispatch){
     axios.post(`${ROOT_URL}/signin`,{email,password})
          .then((data)=>{
-           toastr.success('Log in success');
+           toastr.success('登录成功');
+           data.data.error=null;
+           localStorage.setItem('auth_data',JSON.stringify(data.data));
            dispatch(authSuccess(data.data));
+           if(data.data.token){
+             localStorage.setItem('token',data.data.token);
+           }
            browserHistory.push('/profile');
          }).catch(()=>{
-           toastr.error('Log in Fail');
+           dispatch(authError('用户名或密码输入无效,请重新输入'));
+           toastr.error('登录失败');
+         });
+  };
+}
+
+
+export function authError(error){
+  return {
+    type:AUTH_USER_ERROR,
+    error
+  };
+}
+
+function signoutSuccess(){
+  return {
+    type:UNAUTH_USER
+  };
+}
+export function signoutUser(){
+  // console.log('sign out');
+  let token = localStorage.getItem('token');
+  return function(dispatch){
+    axios.request({
+      url:`${ROOT_URL}/signout`,
+      method:'get',
+      headers: {'x-auth': token},
+    }).then(()=>{
+      toastr.success('退出登录');
+      localStorage.removeItem('token');
+      localStorage.removeItem('auth_data');
+      dispatch(signoutSuccess());
+    }).catch(()=>{
+      dispatch(authError('用户名或密码输入无效,请重新输入'));
+      toastr.error('登录失败');
+    });
+  };
+}
+
+
+export function signupUser({email,password}){
+  // 提交用户的注册信息到服务器
+  // 认证成功，返回用户信息，保存jwt，重定向
+  // 认证失败， 显示错误信息
+  return function(dispatch){
+    axios.post(`${ROOT_URL}/signup`,{email,password})
+         .then((data)=>{
+           toastr.success('登录成功');
+           data.data.error=null;
+           
+           dispatch(authSuccess(data.data));
+           if(data.data.token){
+             localStorage.setItem('auth_data',JSON.stringify(data.data));
+             localStorage.setItem('token',data.data.token);
+           }
+           browserHistory.push('/profile');
+         }).catch((data)=>{
+           let errorMessage = (data.data&&data.data.error)||'服务器暂时无响应，请稍后再试';
+           dispatch(authError(errorMessage));
+           toastr.error('注册失败');
          });
   };
 }
