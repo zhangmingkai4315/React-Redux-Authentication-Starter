@@ -3,7 +3,8 @@ const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const bcryptjs = require('bcryptjs');
-const SECRET='secret_info';
+const config = require('config');
+const SECRET=config.get('server.jwtSecret');
 // {
 //     email:'abc@gmail.com',
 //     password:hash('123'),
@@ -57,7 +58,7 @@ UserSchema.methods={
     if(user.tokens.length>9){
       user.tokens.shift();
     }
-    // 
+    //
     user.tokens.push({
       access,
       token
@@ -88,7 +89,7 @@ UserSchema.statics.findByToken=function(token){
   try{
     decoded = jwt.verify(token,SECRET);
   }catch(e){
-        // console.log(e) 
+        // console.log(e)
     return Promise.reject('用户信息验证失败');
   }
   return User.findOne({
@@ -116,13 +117,13 @@ UserSchema.statics.findByCredentials=function(email,password){
     });
   });
 };
-//mongooseschema 
+//mongooseschema
 UserSchema.pre('save',function(next){
   var user = this;
   if(user.isModified('password')){
     bcryptjs.genSalt(10,(err,salt)=>{
       bcryptjs.hash(user.password,salt,(err,hash)=>{
-        user.password = hash; 
+        user.password = hash;
         next();
       });
     });

@@ -1,6 +1,7 @@
 {
     "database":{
-        "mongo_url" : "mongodb://localhost:27017/AppTest",
+        "mongoUrl" : "mongodb://localhost:27017/AppTest",
         "retry":5000
-    }
+    },
+    "env":"Test"
 }

@@ -4,7 +4,7 @@ const {User} = require('../models');
 const router = express.Router();
 const _ = require('lodash');
 const {authMiddleware} = require('../middleware');
-// post /signup 注册用户接口 
+// post /signup 注册用户接口
 // 提供用户的注册信息，包含用户邮箱和密码
 // 成功：返回包含x-auth的http信息以及用户的id
 // 失败：返回失败的错误代码和信息
@@ -25,7 +25,7 @@ function validateSignup(email,password){
 }
 
 
-router.post('/signup',(req,res)=>{ 
+router.post('/signup',(req,res)=>{
   if(!req.body){
     res.status(400).send('请重新输入验证信息');
     return;
@@ -46,7 +46,7 @@ router.post('/signup',(req,res)=>{
     }
     return user.save();
   })
-  .then(user=>{ 
+  .then(user=>{
     return user.generateAuthToken();
   })
   .then(token=>{
@@ -70,14 +70,14 @@ router.post('/signup',(req,res)=>{
   });
 });
 
-// post /signin 登录用户接口 
+// post /signin 登录用户接口
 // 登入用户邮箱和密码
 // 成功：返回包含x-auth的http信息
 // 失败：返回失败的错误代码和信息
 router.post('/signin',(req,res)=>{
   let userObj;
-  if(!req.body){
-    res.status(400).send('输入数据有误');
+  if(!req.body||!req.body.email||!req.body.password){
+    res.status(400).send({error:'输入数据有误'});
     return;
   }
   let body = _.pick(req.body,['email','password']);
@@ -96,7 +96,7 @@ router.post('/signin',(req,res)=>{
   .catch((e)=>{
     // 如果是接收到reject则传递到前端页面
     if(typeof e === 'string'){
-      res.status(400).json({error:e});
+      res.status(401).json({error:e});
       return;
     }else{
         // 对于其他比如数据库连接问题导致的异常传递500
@@ -105,7 +105,7 @@ router.post('/signin',(req,res)=>{
     }
   });
 });
-// get /profile 用户私有profile页面接口 
+// get /profile 用户私有profile页面接口
 // 提供用户jwt认证header后才能访问
 // 成功：返回/profile信息
 // 失败：返回失败的错误代码和信息
@@ -113,16 +113,23 @@ router.get('/profile',authMiddleware,(req,res)=>{
   res.json(req.user);
 });
 
-// get /logout 用户退出页面接口 
+// get /signout 用户退出页面接口
 // 提供用户jwt认证header后才能访问
 // 成功：删除用户的登录token
 // 失败：返回失败的错误代码和信息
 router.get('/signout',authMiddleware,(req,res)=>{
-  req.user.removeToken(req.token).then(()=>{
-    res.header('x-auth','').send();
-  }).catch(()=>{
-    res.status(500).send('服务器暂时不可用');
-  });
+  let token = req.token || req.header('x-auth');
+  if(!token){
+    res.status(401).send({error:'token不存在'});
+    return;
+  }else{
+    req.user.removeToken(token).then(()=>{
+      res.header('x-auth','').send();
+    }).catch(()=>{
+      res.status(500).send('服务器暂时不可用');
+    });
+  }
+
 });
 
 module.exports = router;

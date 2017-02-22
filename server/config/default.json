@@ -1,10 +1,12 @@
 {
     "server":{
-      "port":3001
+      "port":3001,
+      "jwtSecret":"IWILLNOTTELLYOU"
     },
 
     "database":{
-        "mongo_url" : "mongodb://localhost:27017/AppDev",
+        "mongoUrl" : "mongodb://localhost:27017/AppDev",
         "retry":5000
-    }
+    },
+    "env":"Development"
 }

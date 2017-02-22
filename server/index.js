@@ -9,9 +9,13 @@ const api_routes = require('./routes/api');
 const {authMiddleware} = require('./middleware');
 const Port = config.get('server.port');
 const app = express();
-
+let databaseEnv = config.get('database.mongoUrl');
+let env = config.get('env');
 app.use(bodyParser .json());
-app.use(morgan('combined'));
+if(env==='production'){
+  app.use(morgan('combined'));
+}
+
 app.use(cors());
 
 app.use('/', user_routes);
@@ -22,7 +26,9 @@ app.listen(Port,(err)=>{
   if(err){
     console.log(err);
   }else{
-    console.log(`Express app is listen at port ${Port}`);
+    console.log(`Express App : localhost:${Port}`);
+    console.log(`Run Env: ${env}`);
+    console.log(`Database Env: ${databaseEnv}`);
   }
 });
 

@@ -1,6 +1,9 @@
 const {User} = require('../models');
 const authMiddleware = (req,res,next)=>{
-  let token = req.header('x-auth');
+  let token = req.token || req.header('x-auth');
+  if(!token){
+    res.status(401).send({error:'token不存在'});
+  }
   User.findByToken(token)
   .then((user)=>{
     if(!user){
