@@ -1,0 +1,10 @@
+{
+    "server":{
+      "port":3001
+    },
+
+    "database":{
+        "mongo_url" : "mongodb://localhost:27017/AppDev",
+        "retry":5000
+    }
+}

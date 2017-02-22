@@ -1,15 +1,14 @@
 const mongoose = require('mongoose');
+const config = require('config');
 mongoose.Promise = global.Promise;
 // 服务重新启动连接
 const connectWithRetry = function() {
-    return mongoose.connect(process.env.MONGODB_URL,function(err){
-        if(err){
-            console.log('Failed to connect to mongodb - retrying in 5 sec',err.message)
-            setTimeout(connectWithRetry, 5000);
-        };
-    });
+  return mongoose.connect(config.get('database.mongo_url'),function(err){
+    if(err){
+      console.log('Failed to connect to mongodb - retrying in 5 sec',err.message);
+      setTimeout(connectWithRetry, config.get('database.retry'));
+    }
+  });
 };
 connectWithRetry();
-module.exports={
-    mongoose
-}
+module.exports={mongoose};

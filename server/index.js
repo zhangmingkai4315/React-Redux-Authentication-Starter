@@ -1,16 +1,13 @@
-
-const config = require('./config.js');
+const config = require('config');
 const express = require('express');
 const bodyParser = require('body-parser');
-
 const cors = require('cors');
 const morgan  = require('morgan');
-const { mongoose } = require('./db/mongoose')
+require('./db/mongoose');
 const user_routes = require('./routes/index');
 const api_routes = require('./routes/api');
 const {authMiddleware} = require('./middleware');
-const Port = process.env.Port||3000;
-const _ = require('lodash');
+const Port = config.get('server.port');
 const app = express();
 
 app.use(bodyParser .json());
@@ -22,11 +19,11 @@ app.use('/api',authMiddleware, api_routes);
 
 
 app.listen(Port,(err)=>{
-    if(err){
-        console.log(err)
-    }else{
-        console.log(`Express app is listen at port ${Port}`);
-    }
-})
+  if(err){
+    console.log(err);
+  }else{
+    console.log(`Express app is listen at port ${Port}`);
+  }
+});
 
 module.exports = {app};
