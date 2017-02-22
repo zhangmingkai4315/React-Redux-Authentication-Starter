@@ -13,10 +13,13 @@ git clone https://github.com/zhangmingkai4315/React-Redux-Authentication-Starter
 2.分别进入两个目录安装所需的依赖
 
 ```
-
+客户端
 cd client && npm install 
-cd ../
-cd server && npm install 
+npm run start:dev
+ 
+服务器
+cd server && npm install
+npm run start:dev 
 
 ```
 

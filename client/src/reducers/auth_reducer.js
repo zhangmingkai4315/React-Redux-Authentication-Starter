@@ -4,7 +4,7 @@ export default function(state={},action){
   case AUTH_USER:
     return Object.assign({},state,action.payload);
   case AUTH_USER_ERROR:
-    return Object.assign({},state,{error:action.error});
+    return Object.assign({},state,{error:action.error,authenticate:false});
   case UNAUTH_USER:
     return {authenticate:false};
   default:

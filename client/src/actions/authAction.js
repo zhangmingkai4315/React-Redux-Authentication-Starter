@@ -10,7 +10,7 @@ function authSuccess(data){
   };
 }
 export function signinUser({email,password}){
-  // 提交用户的认证信息到服务器，需要使用redux-thunk完成异步请求 
+  // 提交用户的认证信息到服务器，需要使用redux-thunk完成异步请求
   // 认证成功，返回用户信息，保存jwt，重定向用户到route
   // 认证失败， 显示错误信息
   return function(dispatch){
@@ -24,9 +24,9 @@ export function signinUser({email,password}){
              localStorage.setItem('token',data.data.token);
            }
            browserHistory.push('/profile');
-         }).catch(()=>{
-           dispatch(authError('用户名或密码输入无效,请重新输入'));
-           toastr.error('登录失败');
+         }).catch((e)=>{
+           let errorMessage = (e.response&&e.response.data.error)||'服务器暂时无响应，请稍后再试';
+           toastr.error(errorMessage);
          });
   };
 }
@@ -57,9 +57,9 @@ export function signoutUser(){
       localStorage.removeItem('token');
       localStorage.removeItem('auth_data');
       dispatch(signoutSuccess());
-    }).catch(()=>{
-      dispatch(authError('用户名或密码输入无效,请重新输入'));
-      toastr.error('登录失败');
+    }).catch((e)=>{
+      let errorMessage = e.data&&e.data.error;
+      dispatch(authError(errorMessage));
     });
   };
 }
@@ -74,17 +74,16 @@ export function signupUser({email,password}){
          .then((data)=>{
            toastr.success('登录成功');
            data.data.error=null;
-           
+
            dispatch(authSuccess(data.data));
            if(data.data.token){
              localStorage.setItem('auth_data',JSON.stringify(data.data));
              localStorage.setItem('token',data.data.token);
            }
            browserHistory.push('/profile');
-         }).catch((data)=>{
-           let errorMessage = (data.data&&data.data.error)||'服务器暂时无响应，请稍后再试';
-           dispatch(authError(errorMessage));
-           toastr.error('注册失败');
+         }).catch((e)=>{
+           let errorMessage = (e.response&&e.response.data.error)||'服务器暂时无响应，请稍后再试';
+           toastr.error(errorMessage);
          });
   };
 }

@@ -14,10 +14,19 @@ export function fetchApiVersion(){
     axios.get(API_URL,{
       headers:{'x-auth':localStorage.getItem('token')}
     }).then((data)=>{
-      // console.log(data);
       dispatch(fetchApiVersionSuccess(data.data.version));
-    }).catch(()=>{
-      toastr.error('服务暂时不可用');
+    }).catch((e)=>{
+      if(e.response){
+        toastr.error(e.response.data.error);
+        if(e.response.status === 401){
+          // delete localstorage
+          localStorage.removeItem('token');
+          localStorage.removeItem('auth');
+          // redirect user to login
+        }
+      }else{
+        toastr.error('服务暂时不可用');
+      }
     });
   };
 }
