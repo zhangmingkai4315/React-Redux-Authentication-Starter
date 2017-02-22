@@ -52,7 +52,12 @@ UserSchema.methods={
             access,
             _id:user._id.toHexString()
         },SECRET).toString();
-
+        // 最多保存10个用户的token
+        // db.users.update({"email" : "user.email"},{$pop:{"tokens":-1}});
+        if(user.tokens.length>9){
+            user.tokens.shift();
+        }
+        // 
         user.tokens.push({
             access,
             token
@@ -84,7 +89,7 @@ UserSchema.statics.findByToken=function(token){
         decoded = jwt.verify(token,SECRET);
     }catch(e){
         // console.log(e)
-        return Promise.reject();
+        return Promise.reject('用户信息验证失败');
     }
     return User.findOne({
         _id:decoded._id,
@@ -97,7 +102,7 @@ UserSchema.statics.findByCredentials=function(email,password){
     let User = this;
     return User.findOne({email}).then((user)=>{
         if(!user){
-            return Promise.reject();
+            return Promise.reject("输入用户名不存在");
         }
         return new Promise((reslove,reject)=>{
             bcryptjs.compare(password,user.password,(err,res)=>{
@@ -105,7 +110,7 @@ UserSchema.statics.findByCredentials=function(email,password){
                 if(res){
                     return reslove(user);
                 }else{
-                    return reject();
+                    return reject("输入密码不正确，请重新输入");
                 }
             });
         });
